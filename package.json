@@ -1,0 +1,33 @@
+{
+  "name": "kmitmarksv3",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.18",
+    "@types/react": "19.2.7",
+    "http-server": "^14.1.1",
+    "typescript": "5.9.3"
+  },
+  "dependencies": {
+    "@dataconnect/generated": "file:src/dataconnect-generated",
+    "@next/swc-win32-x64-msvc": "^16.1.0",
+    "firebase": "^12.7.0",
+    "firebase-admin": "^13.6.0",
+    "lucide-react": "^0.562.0",
+    "next": "^16.1.0",
+    "papaparse": "^5.5.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-hot-toast": "^2.6.0"
+  }
+}

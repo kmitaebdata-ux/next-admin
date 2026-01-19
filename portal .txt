@@ -1,0 +1,32 @@
+kmitaebdata@gmail.com
+Kmit@123
+1LXHe7kEZzflIoPMyLxfwQOO4f03
+
+cd C:\Users\Naveen\Desktop\KMITMarksV3\public/
+firebase deploy
+firebase deploy --only hosting,firestore
+
+cd C:\Users\Naveen\Desktop\admin\
+firebase deploy --only functions
+
+cd C:\Users\Naveen\Desktop\next-admin/app/admin/page.jsx
+
+cd C:\Users\Naveen\Desktop\next-admin/
+npm run dev
+
+
+
+
+http://localhost:3000/login
+
+
+
+students
+faculty
+subjects
+facultyAssignments
+marks
+roles
+notices
+
+

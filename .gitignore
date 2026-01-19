@@ -1,0 +1,13 @@
+node_modules/
+.next/
+out/
+.env
+.env.local
+
+# service account keys
+serviceAccountKey.json
+tools/serviceAccountKey.json
+
+# any txt copies of keys
+*.key
+*.pem

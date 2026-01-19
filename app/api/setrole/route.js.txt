@@ -1,0 +1,10 @@
+import { NextResponse } from "next/server";
+import admin from "../../../lib/firebaseAdmin";
+
+export async function POST(req) {
+  const { uid, role } = await req.json();
+
+  await admin.auth().setCustomUserClaims(uid, { [role]: true });
+
+  return NextResponse.json({ success: true });
+}

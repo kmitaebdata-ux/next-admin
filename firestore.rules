@@ -1,0 +1,42 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Roles collection — only admins can write
+    match /roles/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && exists(/databases/$(database)/documents/roles/$(request.auth.uid)) && get(/databases/$(database)/documents/roles/$(request.auth.uid)).data.role == 'ADMIN';
+    }
+
+    // Students, faculty, subjects, marks: admin-only write, authenticated read for basic data
+    match /students/{doc} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && get(/databases/$(database)/documents/roles/$(request.auth.uid)).data.role == 'ADMIN';
+    }
+    match /faculty/{doc} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && get(/databases/$(database)/documents/roles/$(request.auth.uid)).data.role == 'ADMIN';
+    }
+    match /subjects/{doc} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && get(/databases/$(database)/documents/roles/$(request.auth.uid)).data.role == 'ADMIN';
+    }
+    match /marks/{doc} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && get(/databases/$(database)/documents/roles/$(request.auth.uid)).data.role == 'ADMIN';
+    }
+    match /notices/{doc} {
+      allow read: if true; // public notices readable by anyone
+      allow write: if request.auth != null && get(/databases/$(database)/documents/roles/$(request.auth.uid)).data.role == 'ADMIN';
+    }
+    match /auditLogs/{doc} {
+      allow read: if request.auth != null && get(/databases/$(database)/documents/roles/$(request.auth.uid)).data.role == 'ADMIN';
+      allow write: if request.auth != null && get(/databases/$(database)/documents/roles/$(request.auth.uid)).data.role == 'ADMIN';
+    }
+
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
