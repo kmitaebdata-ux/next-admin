@@ -2,7 +2,7 @@
 
 import { getAuth } from "firebase/auth";
 import { initializeApp } from "firebase/app";
-import { firebaseConfig } from "@/lib/firebaseClient";
+import { firebaseConfig } from "../../lib/firebaseClient";
 
 let app: any;
 

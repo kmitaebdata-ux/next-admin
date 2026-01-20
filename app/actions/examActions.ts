@@ -2,7 +2,8 @@
 
 import { getFunctions, httpsCallable, HttpsCallable } from "firebase/functions";
 import { initializeApp, FirebaseApp } from "firebase/app";
-import { firebaseConfig } from "@/lib/firebaseClient"; // adjust path
+import { firebaseConfig } from "../../lib/firebaseClient";
+
 
 // init client-side firebase in server action
 let app: FirebaseApp;
