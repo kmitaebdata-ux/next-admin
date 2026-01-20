@@ -1,3 +1,26 @@
+import {
+  collection,
+  getFirestore,
+  addDoc,
+  getDocs,
+  query,
+  where,
+  doc,
+  deleteDoc,
+  updateDoc,
+} from "firebase/firestore";
+import { initializeApp, getApps, FirebaseApp } from "firebase/app";
+import { firebaseConfig } from "../../lib/firebaseClient";
+
+let app: FirebaseApp;
+
+function getClientApp() {
+  if (!getApps().length) {
+    app = initializeApp(firebaseConfig);
+  }
+  return app || getApps()[0];
+}
+
 // 1. Define the shape of your student data
 export interface Student {
   name?: string;
