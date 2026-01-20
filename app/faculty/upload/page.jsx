@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { getStorage, ref, uploadBytesResumable } from "firebase/storage";
-import { auth } from "@/lib/firebaseClient";
+import { auth } from "../../../lib/firebaseClient"; // ✅ FIXED IMPORT
 
 export default function UploadMarksPage() {
   const [file, setFile] = useState(null);
@@ -66,7 +66,7 @@ export default function UploadMarksPage() {
       <input
         type="file"
         accept=".csv"
-        onChange={(e) => setFile(e.target.files[0])}
+        onChange={(e) => setFile(e.target.files?.[0] || null)}
         className="border p-2 rounded w-80"
       />
 
@@ -77,9 +77,7 @@ export default function UploadMarksPage() {
         Upload CSV
       </button>
 
-      {progress > 0 && !uploaded && (
-        <p>Uploading: {progress}%</p>
-      )}
+      {progress > 0 && !uploaded && <p>Uploading: {progress}%</p>}
 
       {uploaded && (
         <p className="text-green-600 font-semibold">
@@ -87,9 +85,7 @@ export default function UploadMarksPage() {
         </p>
       )}
 
-      {error && (
-        <p className="text-red-600">{error}</p>
-      )}
+      {error && <p className="text-red-600">{error}</p>}
     </div>
   );
 }

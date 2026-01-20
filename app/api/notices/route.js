@@ -1,9 +1,14 @@
-import { db } from "@/lib/firebaseAdmin";
+import admin from "../../../lib/firebaseAdmin";
 
 export async function GET() {
-  const snapshot = await db.collection("notices").orderBy("postedOn", "desc").get();
+  const db = admin.firestore();
 
-  const notices = snapshot.docs.map(doc => ({
+  const snapshot = await db
+    .collection("notices")
+    .orderBy("postedOn", "desc")
+    .get();
+
+  const notices = snapshot.docs.map((doc) => ({
     id: doc.id,
     ...doc.data(),
   }));
@@ -13,6 +18,8 @@ export async function GET() {
 
 export async function POST(req) {
   try {
+    const db = admin.firestore();
+
     const data = await req.json();
 
     const notice = {
@@ -29,7 +36,6 @@ export async function POST(req) {
       message: "created",
       id: ref.id,
     });
-
   } catch (err) {
     return Response.json({ error: err.message }, { status: 500 });
   }
