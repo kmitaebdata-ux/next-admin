@@ -1,5 +1,7 @@
 module.exports = {
   plugins: {
-    "@tailwindcss/postcss": {},
+   @tailwind base;
+@tailwind components;
+@tailwind utilities;
   },
 };
