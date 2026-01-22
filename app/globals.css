@@ -1,15 +1,29 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* =========================
-   Global styles
-========================= */
 
-html,
-body {
-  height: 100%;
+/* Scan all files in your app and components directories */
+@source "../app/**/*.{js,ts,jsx,tsx,mdx}";
+@source "../components/**/*.{js,ts,jsx,tsx,mdx}";
+
+@layer base {
+  /* This ensures your utility classes like bg-slate-50 actually work */
+  body {
+    @apply bg-slate-50 text-slate-900;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+  }
+  
+  html {
+    height: 100%;
+  }
 }
 
-body {
-  margin: 0;
-  padding: 0;
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
 }

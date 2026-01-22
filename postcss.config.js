@@ -1,7 +1,5 @@
-module.exports = {
+export default {
   plugins: {
-   @tailwind base;
-@tailwind components;
-@tailwind utilities;
+    '@tailwindcss/postcss': {},
   },
-};
+}
