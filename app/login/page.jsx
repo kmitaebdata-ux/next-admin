@@ -1,17 +1,24 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { auth } from "@/lib/firebase"; // ✅ make sure this file exists
+import {
+  GoogleAuthProvider,
+  signInWithPopup,
+  setPersistence,
+  browserLocalPersistence,
+} from "firebase/auth";
+
+// ✅ IMPORTANT: use your existing firebase client file
+import { auth } from "../../lib/firebaseClient";
 
 export default function LoginPage() {
-  const router = useRouter();
-
   const [notices, setNotices] = useState([]);
   const [loadingNotices, setLoadingNotices] = useState(true);
 
+  // ---------------------------
+  // ✅ FETCH NOTICE BOARD DATA
+  // ---------------------------
   useEffect(() => {
     async function fetchNotices() {
       try {
@@ -28,25 +35,41 @@ export default function LoginPage() {
     fetchNotices();
   }, []);
 
-  // ✅ GOOGLE LOGIN
+  // ---------------------------
+  // ✅ GOOGLE LOGIN HANDLER
+  // ---------------------------
   const handleGoogleLogin = async () => {
     try {
       const provider = new GoogleAuthProvider();
+
+      // ✅ keeps session even after refresh
+      await setPersistence(auth, browserLocalPersistence);
+
       const result = await signInWithPopup(auth, provider);
 
-      console.log("Google login success:", result.user?.email);
+      // ✅ refresh token to fetch custom claims
+      await result.user.getIdToken(true);
+      const tokenResult = await result.user.getIdTokenResult();
 
-      // ✅ redirect to admin after login
-      router.push("/admin");
+      if (tokenResult?.claims?.admin) {
+        window.location.replace("/admin");
+      } else if (tokenResult?.claims?.faculty) {
+        window.location.replace("/faculty");
+      } else {
+        alert("No role assigned. Please contact Exam Branch / Admin.");
+        await auth.signOut();
+      }
     } catch (err) {
       console.error("Google login error:", err);
       alert(err?.message || "Google login failed");
     }
   };
 
+  // ---------------------------
+  // ✅ UI
+  // ---------------------------
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0b1740] via-[#2b2d7a] to-[#6a1b9a]">
-      {/* split layout */}
       <div className="grid min-h-screen grid-cols-1 md:grid-cols-2">
         {/* LEFT SIDE */}
         <div className="relative flex flex-col justify-center px-8 py-12 md:px-14">
@@ -54,14 +77,15 @@ export default function LoginPage() {
             <h1 className="text-4xl md:text-5xl font-extrabold tracking-wide text-white">
               KMIT Marks Portal
             </h1>
+
             <p className="mt-3 text-white/80">
               Single platform for Students, Faculty, and Exam Branch to manage
               marks, notices, and results.
             </p>
 
             {/* Notice Board */}
-            <div className="mt-10 w-full max-w-md rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 shadow-xl">
-              <div className="rounded-t-2xl bg-indigo-600/50 px-5 py-3 text-center font-semibold text-white">
+            <div className="mt-10 w-full max-w-md rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 shadow-xl overflow-hidden">
+              <div className="bg-indigo-600/50 px-5 py-3 text-center font-semibold text-white">
                 NOTICE BOARD
               </div>
 
@@ -80,15 +104,22 @@ export default function LoginPage() {
                         className="rounded-xl bg-white/10 border border-white/10 px-4 py-3"
                       >
                         <p className="text-white font-medium">{n?.title}</p>
-                        <p className="text-white/70 text-xs mt-1">
-                          {n?.description}
-                        </p>
+                        {n?.description ? (
+                          <p className="text-white/70 text-xs mt-1 line-clamp-2">
+                            {n.description}
+                          </p>
+                        ) : null}
                       </li>
                     ))}
                   </ul>
                 )}
               </div>
             </div>
+
+            {/* footer left small line */}
+            <p className="mt-8 text-xs text-white/40">
+              © {new Date().getFullYear()} KMIT Marks Portal
+            </p>
           </div>
         </div>
 
@@ -109,13 +140,14 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* form */}
+            {/* login form */}
             <form className="mt-7 space-y-4">
               <div>
                 <label className="text-sm text-white/80">User ID</label>
                 <input
                   className="mt-2 w-full rounded-xl bg-white/10 border border-white/10 px-4 py-3 text-white placeholder-white/50 outline-none focus:ring-2 focus:ring-white/30"
                   placeholder="User ID (e.g., Hall Ticket)"
+                  disabled
                 />
               </div>
 
@@ -125,12 +157,15 @@ export default function LoginPage() {
                   type="password"
                   className="mt-2 w-full rounded-xl bg-white/10 border border-white/10 px-4 py-3 text-white placeholder-white/50 outline-none focus:ring-2 focus:ring-white/30"
                   placeholder="Password"
+                  disabled
                 />
               </div>
 
               <button
                 type="button"
-                className="w-full rounded-xl bg-indigo-500 hover:bg-indigo-600 transition text-white font-semibold py-3"
+                disabled
+                className="w-full rounded-xl bg-indigo-500/60 text-white font-semibold py-3 cursor-not-allowed"
+                title="Disabled (Google login enabled below)"
               >
                 Login
               </button>
@@ -142,7 +177,7 @@ export default function LoginPage() {
                 <div className="h-px flex-1 bg-white/15" />
               </div>
 
-              {/* ✅ GOOGLE LOGIN BUTTON */}
+              {/* GOOGLE LOGIN BUTTON */}
               <button
                 type="button"
                 className="w-full rounded-xl bg-white text-gray-900 font-semibold py-3 flex items-center justify-center gap-3 hover:opacity-95 transition"
@@ -163,6 +198,9 @@ export default function LoginPage() {
   );
 }
 
+// ---------------------------
+// ✅ Google Icon
+// ---------------------------
 function GoogleIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 48 48">
