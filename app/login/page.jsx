@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 import {
   GoogleAuthProvider,
@@ -13,6 +14,8 @@ import {
 import { auth } from "../../lib/firebaseClient";
 
 export default function LoginPage() {
+  const searchParams = useSearchParams();
+const redirect = searchParams.get("redirect") || "/admin";
   const [notices, setNotices] = useState([]);
   const [loadingNotices, setLoadingNotices] = useState(true);
 
@@ -52,7 +55,7 @@ export default function LoginPage() {
       const tokenResult = await result.user.getIdTokenResult();
 
       if (tokenResult?.claims?.admin) {
-        window.location.replace("/admin");
+       window.location.replace(redirect);
       } else if (tokenResult?.claims?.faculty) {
         window.location.replace("/faculty");
       } else {
