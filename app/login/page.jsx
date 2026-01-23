@@ -1,15 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "@/lib/firebase"; // ✅ make sure this file exists
 
 export default function LoginPage() {
+  const router = useRouter();
+
   const [notices, setNotices] = useState([]);
   const [loadingNotices, setLoadingNotices] = useState(true);
 
   useEffect(() => {
     async function fetchNotices() {
       try {
-        // change this API route based on your project
         const res = await fetch("/api/notices", { cache: "no-store" });
         if (!res.ok) throw new Error("Failed to fetch notices");
         const data = await res.json();
@@ -22,6 +27,22 @@ export default function LoginPage() {
     }
     fetchNotices();
   }, []);
+
+  // ✅ GOOGLE LOGIN
+  const handleGoogleLogin = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+
+      console.log("Google login success:", result.user?.email);
+
+      // ✅ redirect to admin after login
+      router.push("/admin");
+    } catch (err) {
+      console.error("Google login error:", err);
+      alert(err?.message || "Google login failed");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0b1740] via-[#2b2d7a] to-[#6a1b9a]">
@@ -121,10 +142,11 @@ export default function LoginPage() {
                 <div className="h-px flex-1 bg-white/15" />
               </div>
 
+              {/* ✅ GOOGLE LOGIN BUTTON */}
               <button
                 type="button"
                 className="w-full rounded-xl bg-white text-gray-900 font-semibold py-3 flex items-center justify-center gap-3 hover:opacity-95 transition"
-                onClick={() => alert("Google Login (connect Firebase Auth)")}
+                onClick={handleGoogleLogin}
               >
                 <GoogleIcon />
                 Sign in with Google
